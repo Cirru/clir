@@ -1,17 +1,8 @@
 #include <stdio.h>
-void newline (void );
-void threeNewline (void );
+void print_time (int  hour, int  minute){
+  printf ("%d:%d\n", hour, minute);
+}
 int main (void ){
-  printf ("first line\n");
-  threeNewline ();
-  printf ("second line\n");
+  print_time (23, 55);
   return 0;
-}
-void  newline (void ){
-  printf ("\n");
-}
-void  threeNewline (void ){
-  newline ();
-  newline ();
-  newline ();
 }

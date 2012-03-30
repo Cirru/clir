@@ -46,11 +46,12 @@ converter = (source) ->
     false
 
   detect_f_define = (item) ->
-    image = item.match /^([a-zA-Z]+:\s*[a-zA-Z_]+)\s+<-(\s+.*)$/
+    image = item.match /^([a-zA-Z]+):\s*([a-zA-Z_]+)\s+<-\s+(.*)$/
     if image?
-      func_name = image[1]
-      func_argv = image[2].trim()
-      define_sentence = func_name + ' (' + func_argv + '){'
+      front = image[1]
+      middle = image[2]
+      back = image[3]
+      define_sentence = "#{front} #{middle} (#{back}){"
       exp = define_sentence.replace /:/g, ' '
       code.push exp
       return true
