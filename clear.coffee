@@ -46,12 +46,22 @@ converter = (source) ->
     false
 
   detect_fdefine = (item) ->
-    image = item.match /^([a-zA-Z_]+:[a-zA-Z_]+)\s+::(\s+.*)$/
+    image = item.match /^([a-zA-Z]+:[a-zA-Z_]+)\s+::(\s+.*)$/
     if image?
       func_name = image[1]
       func_argv = image[2].trim()
       define_sentence = func_name + '(' + func_argv + '){'
       exp = define_sentence.replace /:/g, ' '
+      code.push exp
+      return true
+    false
+
+  detect_declare_type = (item) ->
+    image = item.match /^(\s+[a-zA-Z]+):\s*(([a-zA-Z_]+,\s*)*[a-zA-Z_]+)$/
+    if image?
+      front = image[1]
+      back = image[2]
+      exp = front + ' ' + back + ';'
       code.push exp
       return true
     false
@@ -62,18 +72,22 @@ converter = (source) ->
     continue if detect_function item
     continue if detect_return item
     continue if detect_fdefine item
+    continue if detect_declare_type item
   
   code.push ''
-  last_indent = 0
+  out = []
   for index in [0...code.length-1]
     current_indent = (code[index].match /^\s*/)[0].length
     next_indent = (code[index+1].match /^\s*/)[0].length
     n = (current_indent - next_indent) / 2
     if n>0
-      for i in [0...n]
-        code[index] += '}'
-
-  code[0...-1].join '\n'
+      spaces = code[index].match /^\s+/
+      out.push code[index]
+      while n > 0
+        out.push spaces[0...-2] + '}'
+        n -= 1
+    else out.push code[index]
+  out.join '\n'
 
 exports.converter = converter if exports?
 window.converter = converter if window?
