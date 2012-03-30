@@ -46,7 +46,7 @@ converter = (source) ->
     false
 
   detect_fdefine = (item) ->
-    image = item.match /^([a-zA-Z]+:\s*[a-zA-Z_]+)\s+::(\s+.*)$/
+    image = item.match /^([a-zA-Z]+:\s*[a-zA-Z_]+)\s+<-(\s+.*)$/
     if image?
       func_name = image[1]
       func_argv = image[2].trim()
