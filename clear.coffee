@@ -109,7 +109,25 @@ converter = (source) ->
     false
 
   detect_if = (item) ->
-    image = item.match /^(\s*if)\s+(.*)/
+    image = item.match /^(\s*(else\s*)?if)\s+(.*)/
+    if image?
+      head = image[1]
+      body = image[3]
+      exp = "#{head} (#{body}){"
+      code.push exp
+      return true
+    false
+
+  detect_else = (item) ->
+    image = item.match /^(\s*else)\s*$/
+    if image?
+      head = image[1]
+      code.push head + ' {'
+      return true
+    false
+
+  detect_switch = (item) ->
+    image = item.match /^(\s*switch)\s*(.*)\s*$/
     if image?
       head = image[1]
       body = image[2]
@@ -118,9 +136,38 @@ converter = (source) ->
       return true
     false
 
+  detect_case = (item) ->
+    image = item.match /^((\s*)case)\s*(.*)\s*$/
+    if image?
+      lastline = code[-1..-1][0]
+      look_back = lastline.match /^\s*switch/
+      unless look_back?
+        code.push "#{image[2]}  break;"
+      head = image[1]
+      body = image[3]
+      if body.length is 0
+        exp = "#{image[2]}default:{"
+      else
+        exp = "#{head} #{body}:{"
+      code.push exp
+      return true
+    false
+
+  detect_default = (item) ->
+    image = item.match /^(\s*default)\s*$/
+    if image?
+      exp = image[1] + ':{'
+      code.push exp
+      return true
+    false
+
   for item, index in source
     item = do item.trimRight
     continue if detect_if item
+    continue if detect_else item
+    continue if detect_switch item
+    continue if detect_default item
+    continue if detect_case item
     continue if detect_pre_define item
     continue if detect_bare_function item
     continue if detect_mix_define item
@@ -141,7 +188,8 @@ converter = (source) ->
       spaces = (code[index].match /^\s+/)[0]
       out.push code[index]
       while n > 0
-        out.push spaces[0...-2] + '}'
+        spaces = spaces[0...-2]
+        out.push spaces + '}'
         n -= 1
     else out.push code[index]
   out.join '\n'
