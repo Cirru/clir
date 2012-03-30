@@ -89,7 +89,7 @@ converter = (source) ->
     false
 
   detect_bare_function = (item) ->
-    image = item.match /(^\s+[a-zA-Z_]+)\s*%$/
+    image = item.match /(^\s+[a-zA-Z_]+)\s*$/
     if image?
       front = image[1]
       exp = "#{front} ();"
