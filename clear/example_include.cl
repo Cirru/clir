@@ -1,2 +1,4 @@
 
-#include stdio.h
+// google
+#include stdio.h  math
+void: **main()
