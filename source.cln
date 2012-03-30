@@ -1,17 +1,9 @@
 
-#include math.h stdio.h
-
-double: distance <- double: x1, double: y1, double: x2, double: y2
-  
-  double: dx = x2 - x1
-  double: dy = y2 - y1
-  double: dsquared = dx * dx + dy * dy
-  double: result = sqrt (dsquared)
-
-  => result
+#include stdio.h
 
 int: main <- void:
-  
-  printf "distance is %f\n", distance(1.0, 2.0, 4.0, 6.0)
-
+  int: x = 2
+  while x > 0
+    printf "d\n"
+    x -= 1
   => 0

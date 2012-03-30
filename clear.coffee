@@ -109,7 +109,7 @@ converter = (source) ->
     false
 
   detect_if = (item) ->
-    image = item.match /^(\s*(else\s*)?if)\s+(.*)/
+    image = item.match /^(\s*(else\s*)?if)\s+(.*)$/
     if image?
       head = image[1]
       body = image[3]
@@ -161,13 +161,36 @@ converter = (source) ->
       return true
     false
 
+  detect_while = (item) ->
+    image = item.match /^(\s*while)\s+(.*)$/
+    if image?
+      head = image[1]
+      body = image[2]
+      exp = "#{head} (#{body}){"
+      code.push exp
+      return true
+    false
+
+  detect_self_do = (item) ->
+    image = item.match /^(\s*[a-zA-Z_]+)\s*([+\-\*\/%]=)\s*(.*)$/
+    if image?
+      front = image[1]
+      middle = image[2]
+      back = image[3]
+      exp = "#{front} #{middle} #{back};"
+      code.push exp
+      return true
+    false
+
   for item, index in source
     item = do item.trimRight
     continue if detect_if item
+    continue if detect_self_do item
     continue if detect_else item
     continue if detect_switch item
     continue if detect_default item
     continue if detect_case item
+    continue if detect_while item
     continue if detect_pre_define item
     continue if detect_bare_function item
     continue if detect_mix_define item
