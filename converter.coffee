@@ -6,8 +6,8 @@ fs = require 'fs'
 source_name = process.argv[2]
 source = fs.readFileSync source_name, 'utf-8'
 
-filename = source_name.match /([a-z\-_]+\.)cl$/
+filename = source_name.match /([a-z\-_]+\.)cln$/
 newpath = filename[1]
 
 converted = converter source
-fs.writeFileSync "C/"+newpath+"c", converted, 'utf-8'
+fs.writeFileSync "target.c", converted, 'utf-8'
