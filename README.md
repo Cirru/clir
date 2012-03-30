@@ -17,3 +17,8 @@ for:
     void main(){
       printff("x");
     }
+and more..  
+But I'm not going to describe in detail before finished..  
+
+Maybe it will be useful for some people, but so many years has passed,  
+no such languaged created, probably it is just a toy to play.  
