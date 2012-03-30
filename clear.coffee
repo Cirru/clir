@@ -58,7 +58,7 @@ converter = (source) ->
     false
 
   detect_declare_type = (item) ->
-    image = item.match /^(\s+[a-zA-Z]+):\s*(([a-zA-Z_]+,\s*)*[a-zA-Z_]+)$/
+    image = item.match /^(\s*[a-zA-Z]+):\s*(([a-zA-Z_]+,\s*)*[a-zA-Z_]+)$/
     if image?
       front = image[1]
       back = image[2]
@@ -68,7 +68,7 @@ converter = (source) ->
     false
 
   detect_assign = (item) ->
-    image = item.match /^(\s+[a-zA-Z_]+)\s*=\s*(.*)$/
+    image = item.match /^(\s*[a-zA-Z_]+)\s*=\s*(.*)$/
     if image?
       front = image[1]
       back = image[2]
@@ -78,7 +78,7 @@ converter = (source) ->
     false
 
   detect_mix_define = (item) ->
-    image = item.match /^(\s+[a-zA-Z]+):\s*([a-zA-Z_]+)\s*=\s*(.*)$/
+    image = item.match /^(\s*[a-zA-Z]+):\s*([a-zA-Z_]+)\s*=\s*(.*)$/
     if image?
       front = image[1]
       middle = image[2]

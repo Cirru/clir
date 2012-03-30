@@ -1,8 +1,10 @@
 #include <stdio.h>
-void print_time (int  hour, int  minute){
-  printf ("%d:%d\n", hour, minute);
+int hour = 23, minute = 50;
+void print_time (void ){
+  printf ("%d:%d in print_time\n", hour, minute);
 }
 int main (void ){
-  print_time (23, 55);
+  print_time ();
+  printf ("%d:%d in main\n", hour, minute);
   return 0;
 }
