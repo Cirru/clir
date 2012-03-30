@@ -45,7 +45,7 @@ converter = (source) ->
       return true
     false
 
-  detect_fdefine = (item) ->
+  detect_f_define = (item) ->
     image = item.match /^([a-zA-Z]+:\s*[a-zA-Z_]+)\s+<-(\s+.*)$/
     if image?
       func_name = image[1]
@@ -88,7 +88,7 @@ converter = (source) ->
     false
 
   detect_bare_function = (item) ->
-    image = item.match /(^\s+[a-zA-Z_]+)\s*!$/
+    image = item.match /(^\s+[a-zA-Z_]+)\s*%$/
     if image?
       front = image[1]
       exp = "#{front} ();"
@@ -96,15 +96,27 @@ converter = (source) ->
       return true
     false
 
+  detect_pre_define = (item) ->
+    image = item.match /^([a-zA-Z]+):\s*([a-zA-Z_]+)\s*=-\s*(.*)$/
+    if image?
+      front = image[1]
+      middle = image[2]
+      back = image[3]
+      exp = "#{front} #{middle} (#{back});".replace /:/g, ' '
+      code.push exp
+      return true
+    false
+
   for item, index in source
     item = do item.trimRight
+    continue if detect_pre_define item
     continue if detect_bare_function item
     continue if detect_mix_define item
     continue if detect_assign item
     continue if detect_include item
     continue if detect_function item
     continue if detect_return item
-    continue if detect_fdefine item
+    continue if detect_f_define item
     continue if detect_declare_type item
   
   code.push ''
