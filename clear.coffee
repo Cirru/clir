@@ -46,7 +46,7 @@ converter = (source) ->
     false
 
   detect_fdefine = (item) ->
-    image = item.match /^([a-zA-Z]+:[a-zA-Z_]+)\s+::(\s+.*)$/
+    image = item.match /^([a-zA-Z]+:\s*[a-zA-Z_]+)\s+::(\s+.*)$/
     if image?
       func_name = image[1]
       func_argv = image[2].trim()
@@ -87,8 +87,18 @@ converter = (source) ->
       return true
     false
 
+  detect_bare_function = (item) ->
+    image = item.match /(^\s+[a-zA-Z_]+)\s*!$/
+    if image?
+      front = image[1]
+      exp = "#{front} ();"
+      code.push exp
+      return true
+    false
+
   for item, index in source
     item = do item.trimRight
+    continue if detect_bare_function item
     continue if detect_mix_define item
     continue if detect_assign item
     continue if detect_include item
