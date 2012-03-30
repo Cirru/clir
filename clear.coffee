@@ -30,7 +30,7 @@ converter = (source) ->
     if image?
       f_head = image[1]
       f_argv = image[2]
-      target_code = f_head + '(' + f_argv + ');'
+      target_code = f_head + ' (' + f_argv + ');'
       code.push target_code
       return true
     false
@@ -50,7 +50,7 @@ converter = (source) ->
     if image?
       func_name = image[1]
       func_argv = image[2].trim()
-      define_sentence = func_name + '(' + func_argv + '){'
+      define_sentence = func_name + ' (' + func_argv + '){'
       exp = define_sentence.replace /:/g, ' '
       code.push exp
       return true
@@ -61,13 +61,36 @@ converter = (source) ->
     if image?
       front = image[1]
       back = image[2]
-      exp = front + ' ' + back + ';'
+      exp = "#{front} #{back};"
+      code.push exp
+      return true
+    false
+
+  detect_assign = (item) ->
+    image = item.match /^(\s+[a-zA-Z_]+)\s*=\s*(.*)$/
+    if image?
+      front = image[1]
+      back = image[2]
+      exp = "#{front} = #{back};"
+      code.push exp
+      return true
+    false
+
+  detect_mix_define = (item) ->
+    image = item.match /^(\s+[a-zA-Z]+):\s*([a-zA-Z_]+)\s*=\s*(.*)$/
+    if image?
+      front = image[1]
+      middle = image[2]
+      back = image[3]
+      exp = "#{front} #{middle} = #{back};"
       code.push exp
       return true
     false
 
   for item, index in source
     item = do item.trimRight
+    continue if detect_mix_define item
+    continue if detect_assign item
     continue if detect_include item
     continue if detect_function item
     continue if detect_return item
