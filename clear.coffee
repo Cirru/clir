@@ -108,8 +108,19 @@ converter = (source) ->
       return true
     false
 
+  detect_if = (item) ->
+    image = item.match /^(\s*if)\s+(.*)/
+    if image?
+      head = image[1]
+      body = image[2]
+      exp = "#{head} (#{body}){"
+      code.push exp
+      return true
+    false
+
   for item, index in source
     item = do item.trimRight
+    continue if detect_if item
     continue if detect_pre_define item
     continue if detect_bare_function item
     continue if detect_mix_define item
@@ -127,7 +138,7 @@ converter = (source) ->
     next_indent = (code[index+1].match /^\s*/)[0].length
     n = (current_indent - next_indent) / 2
     if n>0
-      spaces = code[index].match /^\s+/
+      spaces = (code[index].match /^\s+/)[0]
       out.push code[index]
       while n > 0
         out.push spaces[0...-2] + '}'
