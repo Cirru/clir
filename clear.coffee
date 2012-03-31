@@ -254,8 +254,35 @@ converter = (source) ->
       return true
     false
 
+  detect_array_define = (item) ->
+    image = item.match /^(\s*\w+):\s*(\w+)\s*#\s*(\w+)$/
+    if image?
+      head = image[1]
+      vara = image[2]
+      length = image[3]
+      exp = "#{head} #{vara}[#{length}];"
+      code.push exp
+      return true
+    false
+
+  detect_array_mix = (item) ->
+    image = item.match /^(\s*\w+):\s*(\w+)\s*#\s*(\w*)\s*=(.+)$/
+    if image?
+      head = image[1]
+      vara = image[2]
+      length = image[3]
+      back = do image[4].trim
+      unless back[0] is '"'
+        back = '{ ' + back + ' }'
+      exp = "#{head} #{vara}[#{length}] = #{back};"
+      code.push exp
+      return true
+    false
+
   for item, index in source
     item = do item.trimRight
+    continue if detect_array_define item
+    continue if detect_array_mix item
     continue if detect_struct item
     continue if detect_struct_f item
     continue if detect_struct_assign item
