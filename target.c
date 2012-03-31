@@ -1,14 +1,16 @@
 #include <stdio.h>
-int fractical (int  n){
-  int result = 1;
-  int i;
-  for (i=1; i<=n; i+=1){
-    result *= i;
-  }
-  return result;
-}
 int main (void ){
-  int result = fractical (4);
-  printf ("%d", result);
+  int i;
+  for (i=1; i<=100; i+=1){
+    int j;
+    for (j=2; j<=(i-1); j+=1){
+      if (i % j == 0){
+        break;
+      }
+    }
+    if (j == i){
+      printf ("%d\n",i);
+    }
+  }
   return 0;
 }

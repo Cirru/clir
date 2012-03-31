@@ -82,7 +82,6 @@ converter = (source) ->
 
   detect_mix_define = (item) ->
     image = item.match /^(\s*[a-zA-Z]+):\s*(\w+)\s*=\s*(.*)$/
-    ll image
     if image?
       front = image[1]
       middle = image[2]
@@ -214,8 +213,17 @@ converter = (source) ->
       return true
     false
 
+  detect_break_continue = (item) ->
+    image = item.match /^(\s+(break)|(continue))\s*$/
+    if image?
+      exp = image[1] + ';'
+      code.push exp
+      return true
+    false
+
   for item, index in source
     item = do item.trimRight
+    continue if detect_break_continue item
     continue if detect_forloop item
     continue if detect_if item
     continue if detect_self_do item

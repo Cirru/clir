@@ -1,17 +1,12 @@
 
 #include stdio.h
 
-int: fractical <- int: n
-  int: result = 1
-
-  for i <- 1, 2.. n
-    result *= i
-
-  => result
-
 int: main <- void:
   
-  int: result = fractical 4
-  printf "%d", result
-
+  for i <- 1, 2.. 100
+    for j <- 2, 3.. (i-1)
+      if i % j == 0
+        break
+    if j == i
+      printf "%d\n",i
   => 0
