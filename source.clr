@@ -3,10 +3,17 @@
 
 int: main <- void:
   
-  for i <- 1, 2.. 100
-    for j <- 2, 3.. (i-1)
-      if i % j == 0
-        break
-    if j == i
-      printf "%d\n",i
+  $ struct_complex:
+    double: x, y
+  double: x = 3.0
+    
+  $ struct_complex: z
+  z.x = x
+  z.y = 4.0
+
+  if z.y < 0
+    printf "%f%fi\n", z.x, z.y
+  else
+    printf "%f+%fi\n", z.x, z.y
+
   => 0

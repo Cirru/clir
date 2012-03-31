@@ -1,16 +1,17 @@
 #include <stdio.h>
 int main (void ){
-  int i;
-  for (i=1; i<=100; i+=1){
-    int j;
-    for (j=2; j<=(i-1); j+=1){
-      if (i % j == 0){
-        break;
-      }
-    }
-    if (j == i){
-      printf ("%d\n",i);
-    }
+  struct struct_complex {
+    double x, y;
+  };
+  double x = 3.0;
+  struct struct_complex z;
+  z.x = x;
+  z.y = 4.0;
+  if (z.y < 0){
+    printf ("%f%fi\n", z.x, z.y);
+  }
+  else {
+    printf ("%f+%fi\n", z.x, z.y);
   }
   return 0;
 }

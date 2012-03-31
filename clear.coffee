@@ -14,7 +14,7 @@ converter = (source) ->
   code = []
 
   detect_include = (item) ->
-    image = item.match /^#include\s+([a-zA-Z_\-\.\s*]+)+$/
+    image = item.match /^#include(.+)$/
     if image?
       include_list = (image[1].trim().split ' ').filter (x) ->
         if x is '' then false else true
@@ -68,7 +68,7 @@ converter = (source) ->
     false
 
   detect_assign = (item) ->
-    image = item.match /^(\s*\w+)\s*=\s*(.*)\s*$/
+    image = item.match /^(\s*[\w\.]+)\s*=\s*(.+)\s*$/
     if image?
       front = image[1]
       back = image[2]
@@ -159,14 +159,6 @@ converter = (source) ->
       return true
     false
 
-  detect_default = (item) ->
-    image = item.match /^(\s*default)\s*$/
-    if image?
-      exp = image[1] + ':{'
-      code.push exp
-      return true
-    false
-
   detect_while = (item) ->
     image = item.match /^(\s*while)\s+(.*)$/
     if image?
@@ -221,15 +213,29 @@ converter = (source) ->
       return true
     false
 
+  detect_struct = (item) ->
+    image = item.match /^(\s*)\$\s*(\w+):\s*(\w+)?$/
+    if image?
+      spaces = image[1]
+      name = image[2]
+      defined = image[3]
+      if defined?
+        exp = "#{spaces}struct #{name} #{defined};"
+      else
+        exp = "#{spaces}struct #{name} {"
+      code.push exp
+      return true
+    false
+
   for item, index in source
     item = do item.trimRight
+    continue if detect_struct item
     continue if detect_break_continue item
     continue if detect_forloop item
     continue if detect_if item
     continue if detect_self_do item
     continue if detect_else item
     continue if detect_switch item
-    continue if detect_default item
     continue if detect_case item
     continue if detect_while item
     continue if detect_pre_define item
@@ -244,7 +250,10 @@ converter = (source) ->
   
   code.push ''
   out = []
+  struct_tag = off
   for index in [0...code.length-1]
+    if (code[index].match /^\s*struct\s+.*{$/)?
+      struct_tag = on
     current_indent = (code[index].match /^\s*/)[0].length
     next_indent = (code[index+1].match /^\s*/)[0].length
     n = (current_indent - next_indent) / 2
@@ -253,7 +262,11 @@ converter = (source) ->
       out.push code[index]
       while n > 0
         spaces = spaces[0...-2]
-        out.push spaces + '}'
+        if struct_tag
+          out.push spaces + '};'
+          struct_tag = off
+        else
+          out.push spaces + '}'
         n -= 1
     else out.push code[index]
   out.join '\n'
