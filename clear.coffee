@@ -26,7 +26,7 @@ converter = (source) ->
     false
 
   detect_function = (item) ->
-    image = item.match /^(\s*[a-zA-Z_]+)\s+(.*)$/
+    image = item.match /^(\s*\w+)\s+(.*)$/
     if image?
       f_head = image[1]
       f_argv = image[2]
@@ -46,7 +46,7 @@ converter = (source) ->
     false
 
   detect_f_define = (item) ->
-    image = item.match /^([a-zA-Z]+):\s*([a-zA-Z_]+)\s+<-\s+(.*)$/
+    image = item.match /^([a-zA-Z]+):\s*(\w+)\s+<-\s+(.*)$/
     if image?
       front = image[1]
       middle = image[2]
@@ -58,7 +58,7 @@ converter = (source) ->
     false
 
   detect_declare_type = (item) ->
-    image = item.match /^(\s*[a-zA-Z]+):\s*(([a-zA-Z_]+,\s*)*[a-zA-Z_]+)$/
+    image = item.match /^(\s*[a-zA-Z]+):\s*((\w+,\s*)*\w+)$/
     if image?
       front = image[1]
       back = image[2]
@@ -68,28 +68,35 @@ converter = (source) ->
     false
 
   detect_assign = (item) ->
-    image = item.match /^(\s*[a-zA-Z_]+)\s*=\s*(.*)$/
+    image = item.match /^(\s*\w+)\s*=\s*(.*)\s*$/
     if image?
       front = image[1]
       back = image[2]
+      image_2 = back.match /^(\w+)\s*(\w+)$/
+      if image_2?
+        back = "#{image_2[1]} (#{image_2[2]})"
       exp = "#{front} = #{back};"
       code.push exp
       return true
     false
 
   detect_mix_define = (item) ->
-    image = item.match /^(\s*[a-zA-Z]+):\s*([a-zA-Z_]+)\s*=\s*(.*)$/
+    image = item.match /^(\s*[a-zA-Z]+):\s*(\w+)\s*=\s*(.*)$/
+    ll image
     if image?
       front = image[1]
       middle = image[2]
       back = image[3]
+      image_2 = back.match /^(\w+)\s+(\w+)$/
+      if image_2?
+        back = "#{image_2[1]} (#{image_2[2]})"
       exp = "#{front} #{middle} = #{back};"
       code.push exp
       return true
     false
 
   detect_bare_function = (item) ->
-    image = item.match /(^\s+[a-zA-Z_]+)\s*$/
+    image = item.match /(^\s+\w+)\s*$/
     if image?
       front = image[1]
       exp = "#{front} ();"
@@ -98,7 +105,7 @@ converter = (source) ->
     false
 
   detect_pre_define = (item) ->
-    image = item.match /^([a-zA-Z]+):\s*([a-zA-Z_]+)\s*=-\s*(.*)$/
+    image = item.match /^([a-zA-Z]+):\s*(\w+)\s*=-\s*(.*)$/
     if image?
       front = image[1]
       middle = image[2]
@@ -172,7 +179,7 @@ converter = (source) ->
     false
 
   detect_self_do = (item) ->
-    image = item.match /^(\s*[a-zA-Z_]+)\s*([+\-\*\/%]=)\s*(.*)$/
+    image = item.match /^(\s*\w+)\s*([+\-\*\/%]=)\s*(.*)$/
     if image?
       front = image[1]
       middle = image[2]
@@ -185,7 +192,7 @@ converter = (source) ->
   detect_forloop = (item) ->
     image = item.match ///^
       (\s*for)\s+
-      ([a-zA-Z_]+)\s*
+      (\w+)\s*
       <-\s*
       (.+)
       ,\s*

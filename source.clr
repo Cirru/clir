@@ -11,7 +11,7 @@ int: fractical <- int: n
 
 int: main <- void:
   
-  int: result = fractical (4)
+  int: result = fractical 4
   printf "%d", result
 
   => 0
