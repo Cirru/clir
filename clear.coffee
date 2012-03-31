@@ -68,7 +68,7 @@ converter = (source) ->
     false
 
   detect_assign = (item) ->
-    image = item.match /^(\s*[\w\.]+)\s*=\s*(.+)\s*$/
+    image = item.match /^(\s*[\w\.\[\]]+)\s*=\s*(.+)\s*$/
     if image?
       front = image[1]
       back = image[2]
@@ -279,6 +279,13 @@ converter = (source) ->
       return true
     false
 
+  detect_sharp_define = (item) ->
+    image = item.match /^#define\s+/
+    if image?
+      code.push item
+      return true
+    false
+
   for item, index in source
     item = do item.trimRight
     continue if detect_array_define item
@@ -299,6 +306,7 @@ converter = (source) ->
     continue if detect_mix_define item
     continue if detect_assign item
     continue if detect_include item
+    continue if detect_sharp_define item
     continue if detect_function item
     continue if detect_return item
     continue if detect_f_define item
