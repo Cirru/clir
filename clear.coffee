@@ -72,9 +72,9 @@ converter = (source) ->
     if image?
       front = image[1]
       back = image[2]
-      image_2 = back.match /^(\w+)\s*(\w+)$/
-      if image_2?
-        back = "#{image_2[1]} (#{image_2[2]})"
+      sub_image = back.match /^(\w+)\s*(\w+)$/
+      if sub_image?
+        back = "#{sub_image[1]} (#{sub_image[2]})"
       exp = "#{front} = #{back};"
       code.push exp
       return true
@@ -227,9 +227,38 @@ converter = (source) ->
       return true
     false
 
+  detect_struct_f = (item) ->
+    image = item.match /^(\s*)\$\s*(\w+):\s+(\w+)\s+<-(.*)$/
+    if image?
+      spaces = image[1]
+      name = image[2]
+      func = image[3]
+      argv = image[4].replace(/:/g, ' ').replace(/\s+/g, ' ')
+      exp = "#{spaces}struct #{name} #{func} (#{argv}){"
+      code.push exp
+      return true
+    false
+
+  detect_struct_assign = (item) ->
+    image = item.match /^(\s*)\$\s*(\w+):\s+(\w+)\s*=(.+)$/
+    if image?
+      spaces = image[1]
+      name = image[2]
+      v_name = image[3]
+      value = do image[4].trim
+      sub_image = value.match /^(\w+)\s*(\w+)$/
+      if sub_image?
+        value = "#{sub_image[1]} (#{sub_image[2]})"
+      exp = "#{spaces}struct #{name} #{v_name} = #{value};"
+      code.push exp
+      return true
+    false
+
   for item, index in source
     item = do item.trimRight
     continue if detect_struct item
+    continue if detect_struct_f item
+    continue if detect_struct_assign item
     continue if detect_break_continue item
     continue if detect_forloop item
     continue if detect_if item

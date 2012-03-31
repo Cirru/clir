@@ -1,17 +1,17 @@
 #include <stdio.h>
-int main (void ){
-  struct struct_complex {
-    double x, y;
-  };
-  double x = 3.0;
-  struct struct_complex z;
+struct complex {
+  double x, y;
+};
+struct complex create_complex ( double x, double y){
+  struct complex z;
   z.x = x;
-  z.y = 4.0;
-  if (z.y < 0){
-    printf ("%f%fi\n", z.x, z.y);
-  }
-  else {
-    printf ("%f+%fi\n", z.x, z.y);
-  }
+  z.y = y;
+  return z;
+};
+int main (void ){
+  double x = 2.0;
+  double y = 3.0;
+  struct complex a = create_complex (x, y);
+  printf ("%f,%f\n", a.x, a.y);
   return 0;
 }

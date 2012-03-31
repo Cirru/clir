@@ -1,19 +1,21 @@
 
 #include stdio.h
 
+$ complex:
+  double: x, y
+
+$ complex: create_complex <- double: x, double: y
+  $ complex: z
+  z.x = x
+  z.y = y
+  => z
+
 int: main <- void:
   
-  $ struct_complex:
-    double: x, y
-  double: x = 3.0
-    
-  $ struct_complex: z
-  z.x = x
-  z.y = 4.0
+  double: x = 2.0
+  double: y = 3.0
 
-  if z.y < 0
-    printf "%f%fi\n", z.x, z.y
-  else
-    printf "%f+%fi\n", z.x, z.y
+  $ complex: a = create_complex (x, y)
+  printf "%f,%f\n", a.x, a.y
 
   => 0
