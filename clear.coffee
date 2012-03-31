@@ -182,8 +182,34 @@ converter = (source) ->
       return true
     false
 
+  detect_forloop = (item) ->
+    image = item.match ///^
+      (\s*for)\s+
+      ([a-zA-Z_]+)\s*
+      <-\s*
+      (.+)
+      ,\s*
+      (.+)\.\.
+      \s*
+      (.+)
+      $///
+    if image?
+      head = image[1]
+      v = image[2]
+      from = image[3]
+      succ = image[4]
+      impr = succ - from
+      last = image[5]
+      v_exp = "#{head[0...-3]}int #{v};"
+      exp = "#{head} (#{v}=#{from}; #{v}<=#{last}; #{v}+=#{impr}){"
+      code.push v_exp
+      code.push exp
+      return true
+    false
+
   for item, index in source
     item = do item.trimRight
+    continue if detect_forloop item
     continue if detect_if item
     continue if detect_self_do item
     continue if detect_else item

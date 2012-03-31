@@ -1,9 +1,14 @@
 #include <stdio.h>
-int main (void ){
-  int x = 2;
-  while (x > 0){
-    printf ("d\n");
-    x -= 1;
+int fractical (int  n){
+  int result = 1;
+  int i;
+  for (i=1; i<=n; i+=1){
+    result *= i;
   }
+  return result;
+}
+int main (void ){
+  int result = fractical (4);
+  printf ("%d", result);
   return 0;
 }
