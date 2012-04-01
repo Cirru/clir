@@ -304,29 +304,29 @@ converter = (source) ->
 
   for item, index in source
     item = do item.trimRight
-    continue if detect_array_define item
-    continue if detect_array_mix item
-    continue if detect_struct item
-    continue if detect_struct_f item
-    continue if detect_struct_assign item
+    continue if detect_array_define   item
+    continue if detect_array_mix      item
+    continue if detect_struct         item
+    continue if detect_struct_f       item
+    continue if detect_struct_assign  item
     continue if detect_break_continue item
-    continue if detect_forloop item
-    continue if detect_if item
-    continue if detect_self_do item
-    continue if detect_else item
-    continue if detect_switch item
-    continue if detect_case item
-    continue if detect_while item
-    continue if detect_pre_define item
-    continue if detect_bare_function item
-    continue if detect_mix_define item
-    continue if detect_assign item
-    continue if detect_include item
-    continue if detect_sharp_define item
-    continue if detect_function item
-    continue if detect_return item
-    continue if detect_f_define item
-    continue if detect_declare_type item
+    continue if detect_forloop        item
+    continue if detect_if             item
+    continue if detect_self_do        item
+    continue if detect_else           item
+    continue if detect_switch         item
+    continue if detect_case           item
+    continue if detect_while          item
+    continue if detect_pre_define     item
+    continue if detect_bare_function  item
+    continue if detect_mix_define     item
+    continue if detect_assign         item
+    continue if detect_include        item
+    continue if detect_sharp_define   item
+    continue if detect_function       item
+    continue if detect_return         item
+    continue if detect_f_define       item
+    continue if detect_declare_type   item
   
   code.push ''
   out = []

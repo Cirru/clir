@@ -13,7 +13,7 @@ int main (void ){
       printf ("Invalid input!\n");
       return 1;
     }
-    printf ("Your gesture: %s\tComputer's gesture: %s\n", gesture[man], gesture[computer]);
+    printf ("Your gesture: %s\tComputer's gesture: %s\n",  gesture[man], gesture[computer]);
     result = (man - computer + 4) % 3 - 1;
     if (result > 0){
       printf ("You win!\n");
