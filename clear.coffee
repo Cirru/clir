@@ -15,7 +15,7 @@ converter = (source) ->
   for item, index in origin_source
     image = item.match /^\s*\\(.+)$/
     if image?
-      source[source.length-1] += ', '+ image[1]
+      source[source.length-1] += ' '+ image[1]
     else
       source.push item
   

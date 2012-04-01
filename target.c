@@ -1,15 +1,29 @@
 #include <stdio.h>
 #include <stdlib.h>
-void print_day (int  day){
-  char days[8][10] = { "", "Mon", "Tue", "Wen",  "Thu", "Fri", "Sta", "Sun" };
-  if (day < 1 || day > 7){
-    printf ("illegal");
-  }
-  else {
-    printf ("%s\n", days[day]);
-  }
-}
+#include <time.h>
 int main (void ){
-  print_day (2);
+  char gesture[3][10] = { "scissor", "stone", "cloth" };
+  int man, computer, result, ret;
+  srand (time (NULL));
+  while (1){
+    computer = rand() % 3;
+    printf ("\nInput your gesture (0-scissor 1-stone 2-cloth:)\n");
+    ret = scanf ("%d", &man);
+    if (ret != 1 || man < 0 || man > 2){
+      printf ("Invalid input!\n");
+      return 1;
+    }
+    printf ("Your gesture: %s\tComputer's gesture: %s\n", gesture[man], gesture[computer]);
+    result = (man - computer + 4) % 3 - 1;
+    if (result > 0){
+      printf ("You win!\n");
+    }
+    else if (result == 0){
+      printf ("Draw!\n");
+    }
+    else {
+      printf ("You lose!\n");
+    }
+  }
   return 0;
 }
