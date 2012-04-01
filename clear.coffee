@@ -9,7 +9,15 @@ available_lines = (lines) ->
     true
 
 converter = (source) ->
-  source = available_lines source.split('\n')
+  origin_source = available_lines source.split('\n')
+
+  source = []
+  for item, index in origin_source
+    image = item.match /^\s*\\(.+)$/
+    if image?
+      source[source.length-1] += ', '+ image[1]
+    else
+      source.push item
   
   code = []
 
@@ -266,15 +274,23 @@ converter = (source) ->
     false
 
   detect_array_mix = (item) ->
-    image = item.match /^(\s*\w+):\s*(\w+)\s*#\s*(\w*)\s*=(.+)$/
+    image = item.match /^(\s*\w+):\s*(\w+)\s*((#\s*\w+\s*)+)=(.+)$/
     if image?
       head = image[1]
       vara = image[2]
-      length = image[3]
-      back = do image[4].trim
-      unless back[0] is '"'
+      tmp = do image[3].trim
+      length = ''
+      sub_image = tmp.match /^#\s*(\w+)\s*(.*)/
+      while sub_image?
+        length += '[' + sub_image[1] + ']'
+        sub_image = sub_image[2].match /^#\s*(\w+)\s*(.*)/
+
+      back = do image[5].trim
+      unless (back.match /".*"/)?
         back = '{ ' + back + ' }'
-      exp = "#{head} #{vara}[#{length}] = #{back};"
+      else if (back.match /"\s*,\s*"/)?
+        back = '{ ' + back + ' }'
+      exp = "#{head} #{vara}#{length} = #{back};"
       code.push exp
       return true
     false
