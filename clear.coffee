@@ -66,10 +66,10 @@ converter = (source) ->
     false
 
   detect_declare_type = (item) ->
-    image = item.match /^(\s*[a-zA-Z]+):\s*((\w+,\s*)*\w+)$/
+    image = item.match /^(\s*(%\w+\s*)?[a-zA-Z]+):\s*((\w+,\s*)*\w+)$/
     if image?
-      front = image[1]
-      back = image[2]
+      front = image[1].replace '%', ''
+      back = image[3]
       exp = "#{front} #{back};"
       code.push exp
       return true
@@ -89,11 +89,11 @@ converter = (source) ->
     false
 
   detect_mix_define = (item) ->
-    image = item.match /^(\s*[a-zA-Z]+):\s*(\w+)\s*=\s*(.*)$/
+    image = item.match /^(\s*(%\w+\s*)?[a-zA-Z]+):\s*(\w+)\s*=\s*(.*)$/
     if image?
-      front = image[1]
-      middle = image[2]
-      back = image[3]
+      front = image[1].replace '%', ''
+      middle = image[3]
+      back = image[4]
       image_2 = back.match /^(\w+)\s+(\w+)$/
       if image_2?
         back = "#{image_2[1]} (#{image_2[2]})"
