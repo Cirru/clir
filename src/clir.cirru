@@ -12,6 +12,7 @@ var
   initialState $ Immutable.fromJS $ {}
     :indentation :
     :code :
+    :types $ {}
 
 var writeProgram $ \ (state tree)
   var
@@ -31,5 +32,5 @@ var writeProgram $ \ (state tree)
 = exports.transform $ \ (source)
   var
     ast $ parser.pare source :runtime
-  JSON.stringify $ writeProgram initialState
+  writeProgram initialState
     Immutable.fromJS ast
