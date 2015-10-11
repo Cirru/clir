@@ -1,4 +1,7 @@
 
+var
+  Immutable $ require :immutable
+
 var write $ \ (state tree)
   cond (is (typeof tree) :string)
     state.update :code $ \ (code)
@@ -11,6 +14,9 @@ var write $ \ (state tree)
       :string $ exports.string state tree
       := $ exports.assign state tree
       ::: $ exports.type state tree
+      :\ $ exports.func state tree
+      :return $ exports.return state tree
+      :+ $ exports.add state tree
       else $ exports.notHandled state tree
 
 var convertValue $ \ (token)
@@ -60,7 +66,7 @@ var convertValue $ \ (token)
   var first $ tree.get 0
   var state1 $ state.update :code $ \ (code)
     + code ":return "
-  var state2 $ exports.write state1 tree
+  var state2 $ exports.write state1 first
   state2.update :code $ \ (code)
     + code :;
 
@@ -69,12 +75,49 @@ var convertValue $ \ (token)
     + code ":/* not" (JSON.stringify tree) ":handled */"
 
 = exports.func $ \ (state tree)
+  var
+    funcName $ tree.get 0
+    args $ tree.get 2
+    body $ tree.slice 3
+    typeInfo $ state.getIn $ [] :types funcName
+  if (not $ ? typeInfo) $ do
+    throw $ + ":type anotations not found for: " funcName
+  var argsCode $ ... args
+    map $ \ (arg index)
+      var itsType $ typeInfo.getIn $ [] :arguments index
+      + itsType ": " arg
+    join ":, "
+  var state1 $ ... state
+    update :code $ \ (code)
+      + code (typeInfo.get :return) ": " funcName ":(" argsCode ":) {\n"
+    update :indentation $ \ (indentation)
+      + indentation ":  "
+  var result $ ... body
+    reduce
+      \ (acc line)
+        var acc1 $ acc.update :code $ \ (code)
+          + code (acc.get :indentation)
+        var acc2 $ exports.write acc1 line
+        acc2.update :code $ \ (code)
+          + code ":\n"
+      , state1
+  ... result
+    update :code $ \ (code)
+      + code ":}"
+    update :indentation $ \ (indentation)
+      indentation.substr 2
 
 = exports.type $ \ (state tree)
   var funcName $ tree.get 0
   var argTypes $ tree.get 2
   var returnType $ tree.get 3
   state.update :types $ \ (types)
-    types.set funcName $ {}
+    types.set funcName $ Immutable.fromJS $ {}
       :arguments argTypes
       :return returnType
+
+= exports.add $ \ (state tree)
+  var leftValue $ convertValue $ tree.get 0
+  var rightValue $ convertValue $ tree.get 2
+  state.update :code $ \ (code)
+    + code leftValue ": + " rightValue
