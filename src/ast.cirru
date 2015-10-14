@@ -10,8 +10,8 @@ var
   :type :#include
   :data null
 
-= exports.assignment $ Immutable.fromJS $ {}
-  :type :assignment
+= exports.assign $ Immutable.fromJS $ {}
+  :type :assign
   :data $ {}
     :left null
     :right null
@@ -94,6 +94,30 @@ var
     :left null
     :right null
 
+= exports.greater $ Immutable.fromJS $ {}
+  :type :greater
+  :data $ {}
+    :left null
+    :right null
+
+= exports.littler $ Immutable.fromJS $ {}
+  :type :littler
+  :data $ {}
+    :left null
+    :right null
+
+= exports.greaterEqual $ Immutable.fromJS $ {}
+  :type :greaterEqual
+  :data $ {}
+    :left null
+    :right null
+
+= exports.littlerEqual $ Immutable.fromJS $ {}
+  :type :littlerEqual
+  :data $ {}
+    :left null
+    :right null
+
 = exports.and $ Immutable.fromJS $ {}
   :type :and
   :data $ {}
@@ -109,3 +133,7 @@ var
 = exports.not $ Immutable.fromJS $ {}
   :type :not
   :data null
+
+= exports.do $ Immutable.fromJS $ {}
+  :type :do
+  :data $ []
