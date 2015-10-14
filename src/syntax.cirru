@@ -2,122 +2,97 @@
 var
   Immutable $ require :immutable
 
-var write $ \ (state tree)
-  cond (is (typeof tree) :string)
-    state.update :code $ \ (code)
-      + code (convertValue tree)
-    case (tree.get 1)
-      :#include $ exports.include state tree
-      :int $ exports.int state tree
-      :float $ exports.float state tree
-      :char $ exports.char state tree
-      :string $ exports.string state tree
-      := $ exports.assign state tree
-      ::: $ exports.type state tree
-      :\ $ exports.func state tree
-      :return $ exports.return state tree
-      :+ $ exports.add state tree
-      else $ exports.notHandled state tree
+var
+  ast $ require :./ast
 
-var convertValue $ \ (token)
-  case true
-    (? $ token.match /^-?[\d\.]+$) token
-    (? $ token.match /^:) $ JSON.stringify $ token.substr 1
-    else token
+var bind $ \ (v k) (k v)
 
-= exports.write write
+var transform $ \ (state tree)
+  cond (Immutable.List.isList tree)
+    bind (tree.get 1) $ \ (op)
+      case op
+        :#include $ transformInclude state tree
+        := $ transformAssign state tree
+        :int $ transformInt state tree
+        :float $ transformFloat state tree
+        :char $ transformChar state tree
+        :string $ transformString state tree
+        ::: $ transformFunctionType state tree
+        :\ $ transformFunction state tree
+        :then $ transformThen state tree
+        :== $ transformEqual state tree
+        :> $ transformGreater state tree
+        :< $ transformLittler state tree
+        :>= $ transformGreaterEqual state tree
+        :<= $ transformLittlerEqual state tree
+        :-- $ transformComment state tree
+        :+ $ transformAdd state tree
+        :- $ transformMinus state tree
+        :* $ transformMultiply state tree
+        :/ $ transformDivision state tree
+        :% $ transformMod state tree
+        :and $ transformAnd state tree
+        :or $ transformOr state tree
+        :not $ transformNot state tree
+        else $ transformComment state tree
+    parseToken state tree
 
-= exports.include $ \ (state tree)
-  var first $ tree.get 0
-  state.update :code $ \ (code)
-    + code ":#include <" first :>
+var parseToken $ \ (state token)
+  state.set :result token
 
-= exports.int $ \ (state tree)
-  var first $ tree.get 0
-  state.update :code $ \ (code)
-    + code ":int " first
+= exports.transform transform
 
-= exports.char $ \ (state tree)
-  var first $ tree.get 0
-  state.update :code $ \ (code)
-    + code ":char " first
+var transformInclude $ \ (state tree)
+  state.set :result
+    ast.include.set :data $ tree.get 0
 
-= exports.string $ \ (state tree)
-  var first $ tree.get 0
-  state.update :code $ \ (code)
-    + code ":char " first :[]
+var transformAssign $ \ (state tree)
 
-= exports.float $ \ (state tree)
-  var first $ tree.get 0
-  state.update :code $ \ (code)
-    + code ":float " first :[]
+var transformInt $ \ (state tree)
+  state.set :result
+    ast.int.set :data $ tree.get 0
 
-= exports.assign $ \ (state tree)
-  var leftValue $ tree.get 0
-  var rightValue $ tree.get 2
-  var state1 $ exports.write state leftValue
-  var state2 $ state1.update :code $ \ (code)
-    + code ": = "
-  var state3 $ exports.write state2 rightValue
-  state3.update :code $ \ (code)
-    + code :;
+var transformFloat $ \ (state tree)
+  state.set :result
+    ast.float.set :data $ tree.get 0
 
-= exports.return $ \ (state tree)
-  var first $ tree.get 0
-  var state1 $ state.update :code $ \ (code)
-    + code ":return "
-  var state2 $ exports.write state1 first
-  state2.update :code $ \ (code)
-    + code :;
+var transformChar $ \ (state tree)
+  state.set :result
+    ast.char.set :data $ tree.get 0
 
-= exports.notHandled $ \ (state tree)
-  state.update :code $ \ (code)
-    + code ":/* not" (JSON.stringify tree) ":handled */"
+var transformString $ \ (state tree)
+  state.set :result
+    ast.string.set :data $ tree.get 0
 
-= exports.func $ \ (state tree)
-  var
-    funcName $ tree.get 0
-    args $ tree.get 2
-    body $ tree.slice 3
-    typeInfo $ state.getIn $ [] :types funcName
-  if (not $ ? typeInfo) $ do
-    throw $ + ":type anotations not found for: " funcName
-  var argsCode $ ... args
-    map $ \ (arg index)
-      var itsType $ typeInfo.getIn $ [] :arguments index
-      + itsType ": " arg
-    join ":, "
-  var state1 $ ... state
-    update :code $ \ (code)
-      + code (typeInfo.get :return) ": " funcName ":(" argsCode ":) {\n"
-    update :indentation $ \ (indentation)
-      + indentation ":  "
-  var result $ ... body
-    reduce
-      \ (acc line)
-        var acc1 $ acc.update :code $ \ (code)
-          + code (acc.get :indentation)
-        var acc2 $ exports.write acc1 line
-        acc2.update :code $ \ (code)
-          + code ":\n"
-      , state1
-  ... result
-    update :code $ \ (code)
-      + code ":}"
-    update :indentation $ \ (indentation)
-      indentation.substr 2
+var transformFunctionType $ \ (state tree)
 
-= exports.type $ \ (state tree)
-  var funcName $ tree.get 0
-  var argTypes $ tree.get 2
-  var returnType $ tree.get 3
-  state.update :types $ \ (types)
-    types.set funcName $ Immutable.fromJS $ {}
-      :arguments argTypes
-      :return returnType
+var transformFunction $ \ (state tree)
 
-= exports.add $ \ (state tree)
-  var leftValue $ convertValue $ tree.get 0
-  var rightValue $ convertValue $ tree.get 2
-  state.update :code $ \ (code)
-    + code leftValue ": + " rightValue
+var transformThen $ \ (state tree)
+
+var transformGreater $ \ (state tree)
+
+var transformLittler $ \ (state tree)
+
+var transformGreaterEqual $ \ (state tree)
+
+var transformLittlerEqual $ \ (state tree)
+
+var transformComment $ \ (state tree)
+  ast.comment.set :data tree
+
+var transformAdd $ \ (state tree)
+
+var transformMinus $ \ (state tree)
+
+var transformMultiply $ \ (state tree)
+
+var transformDivision $ \ (state tree)
+
+var transformMod $ \ (state tree)
+
+var transformAnd $ \ (state tree)
+
+var transformOr $ \ (state tree)
+
+var transformNot $ \ (state tree)

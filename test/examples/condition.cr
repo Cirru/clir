@@ -1,6 +1,6 @@
 
 (> a 1) then
   do
-    :true printf
+    1 printf
   do
-    :false printf
+    0 printf

@@ -5,32 +5,24 @@ var
 
 var
   syntax $ require :./syntax
+  stringify $ require :./stringify
+  ast $ require :./ast
 
-var bind $ \ (v k) (k v)
-
-var
-  initialState $ Immutable.fromJS $ {}
-    :indentation :
-    :code :
-    :types $ {}
-
-var writeProgram $ \ (state tree)
-  var
-    result $ tree.reduce
-      \ (acc exp)
-        bind
-          syntax.write
-            acc.update :code $ \ (code)
-              + code ":\n"
-            , exp
-          \ (newState)
-            newState.update :code $ \ (code)
-              + code ":\n"
-      , state
-  result.get :code
+var initialState $ Immutable.fromJS $ {}
+  :types $ {}
+  :structs $ {}
+  :result $ []
 
 = exports.transform $ \ (source)
   var
-    ast $ parser.pare source :runtime
-  writeProgram initialState
-    Immutable.fromJS ast
+    syntaxTree $ Immutable.fromJS $ parser.pare source :runtime
+    nextState $ syntaxTree.reduce
+      \ (acc statement)
+        acc.update :result $ \ (result)
+          var lineState $ syntax.transform acc statement
+          result.push $ lineState.get :result
+      , initialState
+    astTree $ ast.program.set :data $ nextState.get :result
+    code $ stringify.write astTree
+
+  console.log code
