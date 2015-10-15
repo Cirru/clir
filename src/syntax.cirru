@@ -19,7 +19,7 @@ var transform $ \ (state tree)
         :string $ transformString state tree
         ::: $ transformFunctionType state tree
         :\ $ transformFunction state tree
-        :then $ transformThen state tree
+        :if $ transformIf state tree
         :== $ transformEqual state tree
         :> $ transformGreater state tree
         :< $ transformLittler state tree
@@ -34,12 +34,14 @@ var transform $ \ (state tree)
         :and $ transformAnd state tree
         :or $ transformOr state tree
         :not $ transformNot state tree
-        :do $ transformDo state tree
+        :! $ transformApplication state tree
         else $ transformComment state tree
     parseToken state tree
 
 var parseToken $ \ (state token)
-  state.set :result token
+  state.set :result $ {}
+    :type :token
+    :data token
 
 var extract $ \ (x)
   x.get :result
@@ -76,12 +78,32 @@ var transformFunctionType $ \ (state tree)
 
 var transformFunction $ \ (state tree)
 
-var transformThen $ \ (state tree)
+var transformIf $ \ (state tree)
+  var
+    firstBranch $ tree.get 2
+    secondBranch $ tree.get 3
+    firstLabel $ tree.getIn $ [] 2 0
+  if (not firstLabel) $ do
+    var temp firstBranch
+    = firstBranch secondBranch
+    = secondBranch temp
   state.set :result
-    ... ast.then
+    ... ast.if
       setIn ([] :data :condition) $ extract $ transform state (tree.get 0)
-      setIn ([] :data :concequence) $ extract $ transform state (tree.get 2)
-      setIn ([] :data :alternative) $ extract $ transform state (tree.get 3)
+      setIn ([] :data :consequence) $ cond (? firstBranch)
+        extract $ transformItems state (firstBranch.slice 1)
+        , null
+      setIn ([] :data :alternative) $ cond (? secondBranch)
+        extract $ transformItems state (secondBranch.slice 1)
+        , null
+
+var transformItems $ \ (state lines)
+  lines.reduce
+    \ (acc lineStatement)
+      acc.update :result $ \ (result)
+        var lineState $ transform acc lineStatement
+        result.push $ lineState.get :result
+    , state
 
 var transformGreater $ \ (state tree)
   state.set :result
@@ -158,10 +180,10 @@ var transformNot $ \ (state tree)
     ... ast.not
       set :data $ transform state (tree.get 0)
 
-var
-  transformDo $ \ (state tree)
-    tree.reduce
-      \ (acc line)
-        acc.update :result $ \ (result)
-          result.push $ extract $ transform acc line
-      , state
+var transformApplication $ \ (state tree)
+  var functionName $ tree.get 0
+  var items $ tree.slice 2
+  state.set :result
+    ... ast.application
+      setIn ([] :data :function) functionName
+      setIn ([] :data :arguments) $ extract $ transformItems state items

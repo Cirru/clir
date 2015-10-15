@@ -1,6 +1,6 @@
 
-(> a 1) then
-  do
-    1 printf
-  do
-    0 printf
+(a > 1) if
+  true
+    printf ! 1
+  false
+    printf ! 0

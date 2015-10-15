@@ -32,9 +32,11 @@ var
   :type :string
   :data null
 
-= exports.call $ Immutable.fromJS $ {}
-  :type :call
-  :data $ []
+= exports.application $ Immutable.fromJS $ {}
+  :type :application
+  :data $ {}
+    :function null
+    :arguments $ []
 
 = exports.function $ Immutable.fromJS $ {}
   :type :function
@@ -51,14 +53,12 @@ var
     :name null
     :body $ []
 
-= exports.then $ Immutable.fromJS $ {}
-  :type :then
+= exports.if $ Immutable.fromJS $ {}
+  :type :if
   :data $ {}
-    :name null
-    :data $ {}
-      :condition null
-      :consequence $ []
-      :alternative $ []
+    :condition null
+    :consequence $ []
+    :alternative $ []
 
 = exports.comment $ Immutable.fromJS $ {}
   :type :comment
