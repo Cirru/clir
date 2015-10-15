@@ -35,6 +35,7 @@ var transform $ \ (state tree)
         :or $ transformOr state tree
         :not $ transformNot state tree
         :! $ transformApplication state tree
+        :struct $ transformStruct state tree
         else $ transformComment state tree
     parseToken state tree
 
@@ -187,3 +188,11 @@ var transformApplication $ \ (state tree)
     ... ast.application
       setIn ([] :data :function) functionName
       setIn ([] :data :arguments) $ extract $ transformItems state items
+
+var transformStruct $ \ (state tree)
+  var structName $ tree.get 0
+  var structBody $ tree.slice 2
+  state.set :result
+    ... ast.struct
+      setIn ([] :data :name) structName
+      setIn ([] :data :body) $ extract $ transformItems state structBody
