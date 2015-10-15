@@ -1,6 +1,6 @@
 
 var
   clir $ require :../src/clir
-  sourceCode $ require :./examples/struct.cr
+  sourceCode $ require :./examples/switch.cr
 
 console.log $ clir.transform sourceCode

@@ -137,3 +137,9 @@ var
 = exports.do $ Immutable.fromJS $ {}
   :type :do
   :data $ []
+
+= exports.switch $ Immutable.fromJS $ {}
+  :type :switch
+  :data $ {}
+    :value null
+    :body $ []

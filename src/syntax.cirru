@@ -36,6 +36,8 @@ var transform $ \ (state tree)
         :not $ transformNot state tree
         :! $ transformApplication state tree
         :struct $ transformStruct state tree
+        :switch $ transformSwitch state tree
+        :case $ transformCase state tree
         else $ transformComment state tree
     parseToken state tree
 
@@ -196,3 +198,17 @@ var transformStruct $ \ (state tree)
     ... ast.struct
       setIn ([] :data :name) structName
       setIn ([] :data :body) $ extract $ transformItems state structBody
+
+var transformSwitch $ \ (state tree)
+  var condition $ tree.get 0
+  var switchBody $ tree.slice 2
+  state.set :result
+    ... ast.switch
+      setIn ([] :data :value) $ extract $ transform state condition
+      setIn ([] :data :body)
+        switchBody.map $ \ (casePair)
+          Immutable.fromJS $ []
+            casePair.get 0
+            transformItems state (casePair.slice 1)
+
+var transformCase $ \ (state tree)
