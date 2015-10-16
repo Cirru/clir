@@ -58,8 +58,8 @@ var transformInclude $ \ (state tree)
 var transformAssign $ \ (state tree)
   state.set :result
     ... ast.assign
-      setIn ([] :data :left) $ extract $ transform state $ tree.get 0
-      setIn ([] :data :right) $ extract $ transform state $ tree.get 2
+      setIn ([] :left) $ extract $ transform state $ tree.get 0
+      setIn ([] :right) $ extract $ transform state $ tree.get 2
 
 var transformInt $ \ (state tree)
   state.set :result
@@ -71,7 +71,9 @@ var transformFloat $ \ (state tree)
 
 var transformChar $ \ (state tree)
   state.set :result
-    ast.char.set :data $ tree.get 0
+    ... ast.char
+      set :data $ tree.get 0
+      set :length $ or (tree.get 2) 0
 
 var transformString $ \ (state tree)
   state.set :result
@@ -92,11 +94,11 @@ var transformIf $ \ (state tree)
     = secondBranch temp
   state.set :result
     ... ast.if
-      setIn ([] :data :condition) $ extract $ transform state (tree.get 0)
-      setIn ([] :data :consequence) $ cond (? firstBranch)
+      setIn ([] :condition) $ extract $ transform state (tree.get 0)
+      setIn ([] :consequence) $ cond (? firstBranch)
         extract $ transformItems state (firstBranch.slice 1)
         , null
-      setIn ([] :data :alternative) $ cond (? secondBranch)
+      setIn ([] :alternative) $ cond (? secondBranch)
         extract $ transformItems state (secondBranch.slice 1)
         , null
 
@@ -111,26 +113,26 @@ var transformItems $ \ (state lines)
 var transformGreater $ \ (state tree)
   state.set :result
     ... ast.greater
-      setIn ([] :data :left) $ extract $ transform state (tree.get 0)
-      setIn ([] :data :right) $ extract $ transform state (tree.get 2)
+      setIn ([] :left) $ extract $ transform state (tree.get 0)
+      setIn ([] :right) $ extract $ transform state (tree.get 2)
 
 var transformLittler $ \ (state tree)
   state.set :result
     ... ast.littler
-      setIn ([] :data :left) $ extract $ transform state (tree.get 0)
-      setIn ([] :data :right) $ extract $ transform state (tree.get 2)
+      setIn ([] :left) $ extract $ transform state (tree.get 0)
+      setIn ([] :right) $ extract $ transform state (tree.get 2)
 
 var transformGreaterEqual $ \ (state tree)
   state.set :result
     ... ast.greaterEqual
-      setIn ([] :data :left) $ extract $ transform state (tree.get 0)
-      setIn ([] :data :right) $ extract $ transform state (tree.get 2)
+      setIn ([] :left) $ extract $ transform state (tree.get 0)
+      setIn ([] :right) $ extract $ transform state (tree.get 2)
 
 var transformLittlerEqual $ \ (state tree)
   state.set :result
     ... ast.littlerEqual
-      setIn ([] :data :left) $ extract $ transform state (tree.get 0)
-      setIn ([] :data :right) $ extract $ transform state (tree.get 2)
+      setIn ([] :left) $ extract $ transform state (tree.get 0)
+      setIn ([] :right) $ extract $ transform state (tree.get 2)
 
 var transformComment $ \ (state tree)
   state.set :result
@@ -139,44 +141,44 @@ var transformComment $ \ (state tree)
 var transformAdd $ \ (state tree)
   state.set :result
     ... ast.add
-      setIn ([] :data :left) $ extract $ transform state (tree.get 0)
-      setIn ([] :data :right) $ extract $ transform state (tree.get 2)
+      setIn ([] :left) $ extract $ transform state (tree.get 0)
+      setIn ([] :right) $ extract $ transform state (tree.get 2)
 
 var transformMinus $ \ (state tree)
   state.set :result
     ... ast.minus
-      setIn ([] :data :left) $ extract $ transform state (tree.get 0)
-      setIn ([] :data :right) $ extract $ transform state (tree.get 2)
+      setIn ([] :left) $ extract $ transform state (tree.get 0)
+      setIn ([] :right) $ extract $ transform state (tree.get 2)
 
 var transformMultiply $ \ (state tree)
   state.set :result
     ... ast.multply
-      setIn ([] :data :left) $ extract $ transform state (tree.get 0)
-      setIn ([] :data :right) $ extract $ transform state (tree.get 2)
+      setIn ([] :left) $ extract $ transform state (tree.get 0)
+      setIn ([] :right) $ extract $ transform state (tree.get 2)
 
 var transformDivision $ \ (state tree)
   state.set :result
     ... ast.division
-      setIn ([] :data :left) $ extract $ transform state (tree.get 0)
-      setIn ([] :data :right) $ extract $ transform state (tree.get 2)
+      setIn ([] :left) $ extract $ transform state (tree.get 0)
+      setIn ([] :right) $ extract $ transform state (tree.get 2)
 
 var transformMod $ \ (state tree)
   state.set :result
     ... ast.mod
-      setIn ([] :data :left) $ extract $ transform state (tree.get 0)
-      setIn ([] :data :right) $ extract $ transform state (tree.get 2)
+      setIn ([] :left) $ extract $ transform state (tree.get 0)
+      setIn ([] :right) $ extract $ transform state (tree.get 2)
 
 var transformAnd $ \ (state tree)
   state.set :result
     ... ast.and
-      setIn ([] :data :left) $ extract $ transform state (tree.get 0)
-      setIn ([] :data :right) $ extract $ transform state (tree.get 2)
+      setIn ([] :left) $ extract $ transform state (tree.get 0)
+      setIn ([] :right) $ extract $ transform state (tree.get 2)
 
 var transformOr $ \ (state tree)
   state.set :result
     ... ast.or
-      setIn ([] :data :left) $ extract $ transform state (tree.get 0)
-      setIn ([] :data :right) $ extract $ transform state (tree.get 2)
+      setIn ([] :left) $ extract $ transform state (tree.get 0)
+      setIn ([] :right) $ extract $ transform state (tree.get 2)
 
 var transformNot $ \ (state tree)
   state.set :result
@@ -188,27 +190,25 @@ var transformApplication $ \ (state tree)
   var items $ tree.slice 2
   state.set :result
     ... ast.application
-      setIn ([] :data :function) functionName
-      setIn ([] :data :arguments) $ extract $ transformItems state items
+      setIn ([] :function) functionName
+      setIn ([] :arguments) $ extract $ transformItems state items
 
 var transformStruct $ \ (state tree)
   var structName $ tree.get 0
   var structBody $ tree.slice 2
   state.set :result
     ... ast.struct
-      setIn ([] :data :name) structName
-      setIn ([] :data :body) $ extract $ transformItems state structBody
+      setIn ([] :name) structName
+      setIn ([] :body) $ extract $ transformItems state structBody
 
 var transformSwitch $ \ (state tree)
   var condition $ tree.get 0
   var switchBody $ tree.slice 2
   state.set :result
     ... ast.switch
-      setIn ([] :data :value) $ extract $ transform state condition
-      setIn ([] :data :body)
+      setIn ([] :value) $ extract $ transform state condition
+      setIn ([] :body)
         switchBody.map $ \ (casePair)
           Immutable.fromJS $ []
             casePair.get 0
-            transformItems state (casePair.slice 1)
-
-var transformCase $ \ (state tree)
+            extract $ transformItems state (casePair.slice 1)

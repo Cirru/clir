@@ -22,7 +22,7 @@ var initialState $ Immutable.fromJS $ {}
           var lineState $ syntax.transform acc statement
           result.push $ lineState.get :result
       , initialState
-    astTree $ ast.program.set :data $ nextState.get :result
+    astTree $ ast.program.set :body $ nextState.get :result
     code $ stringify.write astTree
 
   console.log code

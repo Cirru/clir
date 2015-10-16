@@ -4,7 +4,7 @@ var
 
 = exports.program $ Immutable.fromJS $ {}
   :type :program
-  :data $ []
+  :body $ []
 
 = exports.include $ Immutable.fromJS $ {}
   :type :#include
@@ -12,9 +12,8 @@ var
 
 = exports.assign $ Immutable.fromJS $ {}
   :type :assign
-  :data $ {}
-    :left null
-    :right null
+  :left null
+  :right null
 
 = exports.int $ Immutable.fromJS $ {}
   :type :int
@@ -27,6 +26,7 @@ var
 = exports.char $ Immutable.fromJS $ {}
   :type :char
   :data null
+  :length 0
 
 = exports.string $ Immutable.fromJS $ {}
   :type :string
@@ -34,31 +34,27 @@ var
 
 = exports.application $ Immutable.fromJS $ {}
   :type :application
-  :data $ {}
-    :function null
-    :arguments $ []
+  :function null
+  :arguments $ []
 
 = exports.function $ Immutable.fromJS $ {}
   :type :function
-  :data $ {}
-    :type $ {}
-      :arguments $ []
-      :return null
+  :type $ {}
     :arguments $ []
-    :body $ []
+    :return null
+  :arguments $ []
+  :body $ []
 
 = exports.struct $ Immutable.fromJS $ {}
   :type :struct
-  :data $ {}
-    :name null
-    :body $ []
+  :name null
+  :body $ []
 
 = exports.if $ Immutable.fromJS $ {}
   :type :if
-  :data $ {}
-    :condition null
-    :consequence $ []
-    :alternative $ []
+  :condition null
+  :consequence $ []
+  :alternative $ []
 
 = exports.comment $ Immutable.fromJS $ {}
   :type :comment
@@ -66,69 +62,58 @@ var
 
 = exports.add $ Immutable.fromJS $ {}
   :type :add
-  :data $ {}
-    :left null
-    :right null
+  :left null
+  :right null
 
 = exports.minus $ Immutable.fromJS $ {}
   :type :add
-  :data $ {}
-    :left null
-    :right null
+  :left null
+  :right null
 
 = exports.multiply $ Immutable.fromJS $ {}
   :type :multiply
-  :data $ {}
-    :left null
-    :right null
+  :left null
+  :right null
 
 = exports.division $ Immutable.fromJS $ {}
   :type :division
-  :data $ {}
-    :left null
-    :right null
+  :left null
+  :right null
 
 = exports.mod $ Immutable.fromJS $ {}
   :type :mod
-  :data $ {}
-    :left null
-    :right null
+  :left null
+  :right null
 
 = exports.greater $ Immutable.fromJS $ {}
   :type :greater
-  :data $ {}
-    :left null
-    :right null
+  :left null
+  :right null
 
 = exports.littler $ Immutable.fromJS $ {}
   :type :littler
-  :data $ {}
-    :left null
-    :right null
+  :left null
+  :right null
 
 = exports.greaterEqual $ Immutable.fromJS $ {}
   :type :greaterEqual
-  :data $ {}
-    :left null
-    :right null
+  :left null
+  :right null
 
 = exports.littlerEqual $ Immutable.fromJS $ {}
   :type :littlerEqual
-  :data $ {}
-    :left null
-    :right null
+  :left null
+  :right null
 
 = exports.and $ Immutable.fromJS $ {}
   :type :and
-  :data $ {}
-    :left null
-    :right null
+  :left null
+  :right null
 
 = exports.or $ Immutable.fromJS $ {}
   :type :or
-  :data $ {}
-    :left null
-    :right null
+  :left null
+  :right null
 
 = exports.not $ Immutable.fromJS $ {}
   :type :not
@@ -140,6 +125,5 @@ var
 
 = exports.switch $ Immutable.fromJS $ {}
   :type :switch
-  :data $ {}
-    :value null
-    :body $ []
+  :value null
+  :body $ []

@@ -1,4 +1,4 @@
 
 Books struct
   pages int
-  auther char 20
+  author char 20
