@@ -9,8 +9,7 @@ var
   ast $ require :./ast
 
 var initialState $ Immutable.fromJS $ {}
-  :types $ {}
-  :structs $ {}
+  :declarations $ {}
   :result $ []
 
 = exports.transform $ \ (source)
@@ -18,9 +17,12 @@ var initialState $ Immutable.fromJS $ {}
     syntaxTree $ Immutable.fromJS $ parser.pare source :runtime
     nextState $ syntaxTree.reduce
       \ (acc statement)
-        acc.update :result $ \ (result)
-          var lineState $ syntax.transform acc statement
-          result.push $ lineState.get :result
+        var lineState $ syntax.transform acc statement
+        var lastResult $ acc.get :result
+        lineState.update :result $ \ (result)
+          cond (? $ lineState.get :result)
+            lastResult.push $ lineState.get :result
+            , lastResult
       , initialState
     astTree $ ast.program.set :body $ nextState.get :result
     code $ stringify.write astTree

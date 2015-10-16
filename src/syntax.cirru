@@ -17,7 +17,7 @@ var transform $ \ (state tree)
         :float $ transformFloat state tree
         :char $ transformChar state tree
         :string $ transformString state tree
-        ::: $ transformFunctionType state tree
+        ::: $ transformDeclaration state tree
         :\ $ transformFunction state tree
         :if $ transformIf state tree
         :== $ transformEqual state tree
@@ -38,6 +38,7 @@ var transform $ \ (state tree)
         :struct $ transformStruct state tree
         :switch $ transformSwitch state tree
         :case $ transformCase state tree
+        :return $ transformReturn state tree
         else $ transformComment state tree
     parseToken state tree
 
@@ -79,9 +80,26 @@ var transformString $ \ (state tree)
   state.set :result
     ast.string.set :data $ tree.get 0
 
-var transformFunctionType $ \ (state tree)
+var transformDeclaration $ \ (state tree)
+  var functionName $ tree.get 0
+  var argumentItems $ tree.get 2
+  var returnItem $ tree.get 3
+  ... state
+    setIn ([] :declarations functionName) $ Immutable.fromJS $ {}
+      :arguments argumentItems
+      :return returnItem
+    set :result null
 
 var transformFunction $ \ (state tree)
+  var functionName $ tree.get 0
+  var argumentItems $ tree.get 2
+  var bodyItems $ tree.slice 3
+  var declaration $ state.getIn $ [] :declarations functionName
+  state.set :result
+    ... ast.function
+      set :declaration declaration
+      set :arguments argumentItems
+      set :body $ extract $ transformItems state bodyItems
 
 var transformIf $ \ (state tree)
   var
@@ -212,3 +230,7 @@ var transformSwitch $ \ (state tree)
           Immutable.fromJS $ []
             casePair.get 0
             extract $ transformItems state (casePair.slice 1)
+
+var transformReturn $ \ (state tree)
+  state.set :result
+    ast.return.set :data $ extract $ transform state $ tree.get 0
