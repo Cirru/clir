@@ -43,9 +43,7 @@ var transform $ \ (state tree)
     parseToken state tree
 
 var parseToken $ \ (state token)
-  state.set :result $ {}
-    :type :token
-    :data token
+  state.set :result $ ast.token.set :data token
 
 var extract $ \ (x)
   x.get :result

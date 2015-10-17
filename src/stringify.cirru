@@ -6,6 +6,7 @@ var
   blank ": "
   newline ":\n"
   semicolon :;
+  quote ":\""
 
 = exports.write $ \ (ast)
   var initialState $ Immutable.fromJS $ {}
@@ -24,6 +25,8 @@ var write $ \ (state tree)
       :float writeFloat
       :char writeChar
       :string writeString
+      :assign writeAssign
+      :token wirteToken
       else renderString
     \ (codeWriter) (codeWriter state tree)
 
@@ -61,3 +64,18 @@ var writeChar $ \ (state tree)
 var writeString $ \ (state tree)
   state.update :code $ \ (code)
     + code :char blank (tree.get :data)
+
+var writeAssign $ \ (state tree)
+  var state1 $ write state (tree.get :left)
+  var state2 $ state1.update :code $ \ (code)
+    + code blank := blank
+  write state2 (tree.get :right)
+
+var wirteToken $ \ (state tree)
+  var token $ tree.get :data
+  state.update :code $ \ (code)
+    + code $ case true
+      (? $ token.match /^:)
+        + quote (token.slice 1) quote
+      (? $ token.match /^\d) token
+      else $ + :__ token :__

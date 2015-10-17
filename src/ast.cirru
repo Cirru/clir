@@ -131,3 +131,7 @@ var
 = exports.return $ Immutable.fromJS $ {}
   :type :return
   :data null
+
+= exports.token $ Immutable.fromJS $ {}
+  :type :token
+  :data null

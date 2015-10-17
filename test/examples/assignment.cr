@@ -1,4 +1,4 @@
 
 (a int) = 1
 
-(greeting string) = :Hello
+(greeting char 10) = :Hello
