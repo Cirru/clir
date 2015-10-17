@@ -39,9 +39,8 @@ var
 
 = exports.function $ Immutable.fromJS $ {}
   :type :function
-  :declaration $ {}
-    :arguments $ []
-    :return null
+  :name null
+  :returnType null
   :arguments $ []
   :body $ []
 
@@ -66,7 +65,7 @@ var
   :right null
 
 = exports.minus $ Immutable.fromJS $ {}
-  :type :add
+  :type :minus
   :left null
   :right null
 
@@ -134,4 +133,9 @@ var
 
 = exports.token $ Immutable.fromJS $ {}
   :type :token
+  :data null
+
+= exports.type $ Immutable.fromJS $ {}
+  :type :type
+  :name null
   :data null

@@ -32,6 +32,11 @@ var write $ \ (state tree)
       :if writeIf
       :greater writeGreater
       :application writeApplication
+      :struct writeStruct
+      :function writeFunction
+      :type writeType
+      :return writeReturn
+      :add writeAdd
       else renderString
     \ (codeWriter) (codeWriter state tree)
 
@@ -133,3 +138,46 @@ var writeGreater $ \ (state tree)
   var state2 $ state1.update :code $ \ (code)
     + code blank :> blank
   write state2 (tree.get :right)
+
+var writeStruct $ \ (state tree)
+  var structName $ tree.get :name
+  var state1 $ ... state
+    update :code $ \ (code)
+      + code :struct blank structName blank :{ newline
+    update :indentation $ \ (indentation)
+      + indentation blank blank
+  var state2 $ writeLines state1 $ tree.get :body
+  var state3 $ state2.update :indentation $ \ (indentation)
+    indentation.slice 2
+  state3.update :code $ \ (code)
+    + code :}
+
+var writeFunction $ \ (state tree)
+  var state1 $ state.update :code $ \ (code)
+    + code (tree.get :returnType) blank (tree.get :name) lParen
+  var state2 $ writeItems state1 $ tree.get :arguments
+  var state3 $ ... state2
+    update :code $ \ (code)
+      + code rParen blank :{ newline
+    update :indentation $ \ (indentation)
+      + indentation blank blank
+  var state4 $ writeLines state3 $ tree.get :body
+  var state5 $ state4.update :indentation $ \ (indentation)
+    indentation.slice 2
+  state5.update :code $ \ (code)
+    + code :}
+
+var writeType $ \ (state tree)
+  state.update :code $ \ (code)
+    + code (tree.get :name) blank (tree.get :data)
+
+var writeReturn $ \ (state tree)
+  var state1 $ state.update :code $ \ (code)
+    + code :return blank
+  write state1 $ tree.get :data
+
+var writeAdd $ \ (state tree)
+  var state1 $ write state $ tree.get :left
+  var state2 $ state1.update :code $ \ (code)
+    + code blank :+ blank
+  write state2 $ tree.get :right

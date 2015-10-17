@@ -93,10 +93,16 @@ var transformFunction $ \ (state tree)
   var argumentItems $ tree.get 2
   var bodyItems $ tree.slice 3
   var declaration $ state.getIn $ [] :declarations functionName
+  var argumentTypes $ declaration.get :arguments
+  var returnType $ declaration.get :return
   state.set :result
     ... ast.function
-      set :declaration declaration
-      set :arguments argumentItems
+      set :name functionName
+      set :returnType returnType
+      set :arguments $ argumentItems.map $ \ (item index)
+        ... ast.type
+          set :name $ argumentTypes.get index
+          set :data item
       set :body $ extract $ transformItems state bodyItems
 
 var transformIf $ \ (state tree)
