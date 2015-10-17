@@ -18,7 +18,7 @@ var
 
 var bind $ \ (v k) (k v)
 
-var write $ \ (state tree)
+var write $ \ (state tree inline)
   bind
     case (tree.get :type)
       :program writeProgram
@@ -39,8 +39,19 @@ var write $ \ (state tree)
       :add writeAdd
       :switch writeSwitch
       :case writeCase
+      :and writeAnd
       else renderString
-    \ (codeWriter) (codeWriter state tree)
+    \ (codeWriter)
+      cond inline
+        cond (is (tree.get :type) :token)
+          codeWriter state tree
+          bind state $ \ (state)
+            var state1 $ state.update :code $ \ (code)
+              + code lParen
+            var state2 $ codeWriter state1 tree
+            state2.update :code $ \ (code)
+              + code rParen
+        codeWriter state tree
 
 var renderString $ \ (state tree)
   state.update :code $ \ (code)
@@ -136,10 +147,16 @@ var writeIf $ \ (state tree)
     + code :}
 
 var writeGreater $ \ (state tree)
-  var state1 $ write state (tree.get :left)
+  var state1 $ write state (tree.get :left) true
   var state2 $ state1.update :code $ \ (code)
     + code blank :> blank
-  write state2 (tree.get :right)
+  write state2 (tree.get :right) true
+
+var writeAnd $ \ (state tree)
+  var state1 $ write state (tree.get :left) true
+  var state2 $ state1.update :code $ \ (code)
+    + code blank :&& blank
+  write state2 (tree.get :right) true
 
 var writeStruct $ \ (state tree)
   var structName $ tree.get :name
