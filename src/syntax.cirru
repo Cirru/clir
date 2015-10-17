@@ -232,7 +232,10 @@ var transformSwitch $ \ (state tree)
       setIn ([] :body)
         switchBody.map $ \ (casePair)
           Immutable.fromJS $ []
-            casePair.get 0
+            cond (is (casePair.get 0) :else)
+              {} (:type :token) (:data :default)
+              {} (:type :case) $ :data
+                extract $ transform state $ casePair.get 0
             extract $ transformItems state (casePair.slice 1)
 
 var transformReturn $ \ (state tree)

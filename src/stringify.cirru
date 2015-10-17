@@ -37,6 +37,8 @@ var write $ \ (state tree)
       :type writeType
       :return writeReturn
       :add writeAdd
+      :switch writeSwitch
+      :case writeCase
       else renderString
     \ (codeWriter) (codeWriter state tree)
 
@@ -181,3 +183,38 @@ var writeAdd $ \ (state tree)
   var state2 $ state1.update :code $ \ (code)
     + code blank :+ blank
   write state2 $ tree.get :right
+
+var writeSwitch $ \ (state tree)
+  var state1 $ state.update :code $ \ (code)
+    + code :switch blank lParen
+  var state2 $ write state1 $ tree.get :value
+  var state3 $ ... state2
+    update :code $ \ (code)
+      + code rParen blank :{ newline
+    update :indentation $ \ (indentation)
+      + indentation blank blank
+  var state4 $ ... (tree.get :body) $ reduce
+    \ (acc line)
+      var lineCase $ line.get 0
+      var lineBody $ line.get 1
+      var acc1 $ acc.update :code $ \ (code)
+        + code $ acc.get :indentation
+      var acc2 $ write acc1 lineCase
+      var acc3 $ ... acc2
+        update :code $ \ (code)
+          + code :: newline
+        update :indentation $ \ (indentation)
+          + indentation blank blank
+      var acc4 $ writeLines acc3 lineBody
+      acc4.update :indentation $ \ (indentation)
+        indentation.slice 2
+    , state3
+  var state5 $ state4.update :indentation $ \ (indentation)
+    indentation.slice 2
+  state5.update :code $ \ (code)
+    + code :}
+
+var writeCase $ \ (state tree)
+  var state1 $ state.update :code $ \ (code)
+    + code :case blank
+  write state1 $ tree.get :data
